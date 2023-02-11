@@ -79,4 +79,22 @@ class TripControllerTest extends TestCase
         $this->assertEquals(3, $car->trip_count);
     }
 
+    public function testStoreTripCarNotExist()
+    {
+        $this->login();
+
+
+        $body = [
+            'date' => '2020-01-01',
+            'miles' => 10,
+            'total' => 30,
+            'car_id' => 0
+        ];
+
+        $response = $this->post('/api/v1/trips', $body);
+
+        $this->assertEquals("The selected car id is invalid.", $response->exception->getMessage());
+        $this->assertCount(0, Trip::all());
+    }
+
 }

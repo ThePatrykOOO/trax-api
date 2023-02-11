@@ -9,6 +9,8 @@ use App\Repositories\CarRepository;
 use App\Repositories\TripRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class CarController extends Controller
@@ -49,8 +51,20 @@ class CarController extends Controller
      */
     public function destroy(int $id, TripRepository $tripRepository): JsonResponse
     {
-        $this->carRepository->delete($id);
-        $tripRepository->deleteByCarId($id);
-        return new JsonResponse(null, ResponseAlias::HTTP_NO_CONTENT);
+        try {
+            DB::beginTransaction();
+
+            $this->carRepository->delete($id);
+            $tripRepository->deleteByCarId($id);
+
+            DB::commit();
+            return new JsonResponse(null, ResponseAlias::HTTP_NO_CONTENT);
+        } catch (\Exception $exception) {
+            Log::error("CarController@destroy: problem with creating trip", [
+                'exception' => $exception->getMessage(),
+                'id' => $id,
+            ]);
+            return new JsonResponse("Something was wrong", ResponseAlias::HTTP_BAD_REQUEST);
+        }
     }
 }
