@@ -81,7 +81,11 @@ Or to watch for any JS changes you can run
 ```
 docker exec -it trax_php npm run watch
 ```
+Additionally You can run seeders
 
+```
+docker exec -it trax_php php artisan db:seed
+```
 Commit your changes locally and when finished, publish your repo on your public bitbucket or github account. All changes in the code **must** be presented as Pull Request.
 
 **GOOD LUCK!**
