@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Exceptions\TripException;
 use App\Http\Requests\StoreTripRequest;
-use App\Models\Car;
 use App\Models\Trip;
 use App\Repositories\CarRepository;
 use App\Repositories\TripRepository;
@@ -26,7 +25,7 @@ class TripService
     /**
      * @throws TripException
      */
-    public function createNewTrip(StoreTripRequest $request): \Illuminate\Database\Eloquent\Model
+    public function createNewTrip(StoreTripRequest $request): void
     {
         try {
             DB::beginTransaction();
@@ -43,13 +42,11 @@ class TripService
                 'car_id' => $car->id
             ];
 
-            $trip = $this->tripRepository->store($tripData);
+            $this->tripRepository->store($tripData);
 
             $this->updateTripForCar($car, $totalMiles);
 
             DB::commit();
-
-            return $trip;
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error("TripService@createNewTrip: problem with creating trip", [
@@ -61,7 +58,7 @@ class TripService
         }
     }
 
-    private function updateTripForCar(Car $car, float $totalMiles): void
+    private function updateTripForCar($car, float $totalMiles): void
     {
         $data = [
             'trip_count' => $car->trip_count + 1,

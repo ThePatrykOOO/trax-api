@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCarRequest;
-use App\Http\Requests\UpdateCarRequest;
 use App\Http\Resources\CarDetailsResource;
 use App\Http\Resources\CarResource;
-use App\Models\Car;
 use App\Repositories\CarRepository;
+use App\Repositories\TripRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
@@ -29,10 +28,10 @@ class CarController extends Controller
     }
 
 
-    public function store(StoreCarRequest $request): CarResource
+    public function store(StoreCarRequest $request)
     {
-        $car = $this->carRepository->store($request->validated());
-        return new CarResource($car);
+        $this->carRepository->store($request->validated());
+        return new JsonResponse(null, ResponseAlias::HTTP_NO_CONTENT);
     }
 
 
@@ -43,26 +42,15 @@ class CarController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCarRequest  $request
-     * @param  \App\Models\Car  $car
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateCarRequest $request, Car $car)
-    {
-        //
-    }
-
-    /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Car  $car
      * @return JsonResponse
      */
-    public function destroy(int $id): JsonResponse
+    public function destroy(int $id, TripRepository $tripRepository): JsonResponse
     {
         $this->carRepository->delete($id);
+        $tripRepository->deleteByCarId($id);
         return new JsonResponse(null, ResponseAlias::HTTP_NO_CONTENT);
     }
 }

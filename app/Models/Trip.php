@@ -16,7 +16,7 @@ class Trip extends Model
         'car_id',
     ];
 
-    public static function setTotalMiles(Car $car, float $miles): float
+    public static function setTotalMiles($car, float $miles): float
     {
         return $car->trip_miles + $miles;
     }

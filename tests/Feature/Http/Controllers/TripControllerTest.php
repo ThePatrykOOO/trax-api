@@ -71,14 +71,6 @@ class TripControllerTest extends TestCase
         $response = $this->post('/api/v1/trips', $body)
             ->assertSuccessful();
 
-        $response->assertJsonFragment(
-            [
-                'date' => '2020-01-01',
-                'miles' => 10,
-                'total' => 35,
-            ]
-        );
-
         $this->assertCount(1, Trip::all());
 
         $car->refresh();

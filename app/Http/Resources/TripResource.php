@@ -13,9 +13,12 @@ class TripResource extends JsonResource
             'date' => $this->date,
             'miles' => $this->miles,
             'total' => $this->total,
-            'car' => $this->whenLoaded('car', function () {
-                return new CarResource($this->car);
-            }),
+            'car' => [
+                'id' => $this->id,
+                'make' => $this->make,
+                'model' => $this->model,
+                'year' => $this->year
+            ]
         ];
     }
 }

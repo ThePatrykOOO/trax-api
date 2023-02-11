@@ -49,7 +49,6 @@ class CarControllerTest extends TestCase
         ];
 
         $response = $this->post('/api/v1/cars', $body);
-        $response->assertJsonFragment($body);
 
         $this->assertCount(1, Car::all());
     }

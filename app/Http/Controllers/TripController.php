@@ -32,8 +32,8 @@ class TripController extends Controller
     public function store(StoreTripRequest $request, TripService $tripService): TripResource|JsonResponse
     {
         try {
-            $trip = $tripService->createNewTrip($request);
-            return new TripResource($trip);
+            $tripService->createNewTrip($request);
+            return new JsonResponse(null, ResponseAlias::HTTP_NO_CONTENT);
         } catch (TripException $exception) {
             return new JsonResponse($exception->getMessage(), ResponseAlias::HTTP_FORBIDDEN);
         } catch (\Exception $exception) {

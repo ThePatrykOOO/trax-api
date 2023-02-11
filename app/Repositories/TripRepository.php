@@ -2,45 +2,34 @@
 
 namespace App\Repositories;
 
-use App\Models\Trip;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\ITripRepository;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class TripRepository implements CrudRepositoryInterface
+class TripRepository implements ITripRepository
 {
     public function findAll(): Collection
     {
-        return Trip::with('car')->get();
+        return DB::table('trips')
+            ->join('cars', 'cars.id', '=', 'trips.car_id')
+            ->select('trips.*', 'cars.make', 'cars.model', 'cars.year')
+            ->get();
     }
 
-    public function findById(int $id): Model
+    public function store(array $data): bool
     {
-        return Trip::query()->findOrFail($id);
-    }
-
-    public function store(array $data): Model
-    {
-        return Trip::query()->create($data);
-    }
-
-    public function update(array $data, int $id): void
-    {
-        // TODO: Implement update() method.
+        return DB::table('trips')->insert($data);
     }
 
     public function delete(int $id): void
     {
-        Trip::query()->findOrFail($id)->delete();
+        DB::table('trips')->find($id)->delete();
     }
 
     public function deleteByCarId(int $carId): void
     {
-        Trip::query()
-            ->where(
-                [
-                    'car_id' => $carId
-                ]
-            )
+        DB::table('trips')
+            ->where('car_id', '=', $carId)
             ->delete();
     }
 }

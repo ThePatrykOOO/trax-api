@@ -2,34 +2,38 @@
 
 namespace App\Repositories;
 
-use App\Models\Car;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use App\Interfaces\ICarRepository;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class CarRepository implements CrudRepositoryInterface
+class CarRepository implements ICarRepository
 {
     public function findAll(): Collection
     {
-        return Car::all();
+        return DB::table('cars')->get();
     }
 
-    public function findById(int $id): Model
+    public function findById(int $id)
     {
-        return Car::query()->findOrFail($id);
+        $car = DB::table('cars')->find($id);
+        if (!$car) {
+            abort(404, 'Car not found');
+        }
+        return $car;
     }
 
-    public function store(array $data): Model
+    public function store(array $data): bool
     {
-        return Car::query()->create($data);
+        return DB::table('cars')->insert($data);
     }
 
     public function update(array $data, int $id): void
     {
-        Car::query()->findOrFail($id)->update($data);
+        DB::table('cars')->where('id', '=', $id)->update($data);
     }
 
     public function delete(int $id): void
     {
-        Car::query()->findOrFail($id)->delete();
+        DB::table('cars')->where('id', '=', $id)->delete();
     }
 }

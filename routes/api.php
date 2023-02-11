@@ -35,6 +35,5 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('trips', \App\Http\Controllers\TripController::class)->only(['index', 'store']);
     });
 });
-//TODO add observer when Car was deleted then delete all trips
 //TODO implement seeder
 
