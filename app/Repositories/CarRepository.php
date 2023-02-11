@@ -25,7 +25,7 @@ class CarRepository implements CrudRepositoryInterface
 
     public function update(array $data, int $id): void
     {
-        // TODO: Implement update() method.
+        Car::query()->findOrFail($id)->update($data);
     }
 
     public function delete(int $id): void

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Trip;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -93,6 +94,23 @@ class CarControllerTest extends TestCase
             ->assertNoContent();
 
         $this->assertCount(0, Car::all());
+    }
+
+    public function testDeleteTripsWhenCarWasDeleted()
+    {
+        $car = Car::factory()->create();
+
+        Trip::factory(5)->create(
+            [
+                'car_id' => $car->id
+            ]
+        );
+        $this->login();
+        $this->delete('/api/v1/cars/'.$car->id)
+            ->assertNoContent();
+
+        $this->assertCount(0, Car::all());
+        $this->assertCount(0, Trip::all());
     }
 
 }
